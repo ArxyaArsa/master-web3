@@ -3,3 +3,4 @@
 /Warehousing/Warehousing.Domain/bin/*
 /Warehousing/Warehousing.Domain/obj/*
 /Warehousing/Warehousing.Infrastructure/obj/*
+/Warehousing/*/bin/*

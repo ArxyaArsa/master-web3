@@ -16,6 +16,8 @@ namespace Warehousing.Domain.AggregateModels.SupplierAggregate
         public DateTime AddDate { get; private set; }
 
         public Supplier Supplier { get; private set; }
-        public IReadOnlyCollection<ParcelAggregate.Parcel> Parcels { get; set; }
+
+        public readonly List<ParcelAggregate.Parcel> _parcels;
+        public IReadOnlyCollection<ParcelAggregate.Parcel> Parcels => _parcels;
     }
 }

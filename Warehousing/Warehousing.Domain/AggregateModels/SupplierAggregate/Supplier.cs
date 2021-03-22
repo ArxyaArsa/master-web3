@@ -16,6 +16,8 @@ namespace Warehousing.Domain.AggregateModels.SupplierAggregate
         public DateTime? FirstContractDate { get; private set; }
         public DateTime? LastContractDate { get; private set; }
 
-        public virtual IReadOnlyCollection<Contract> Contracts { get; private set; }
+
+        private readonly List<Contract> _contracts;
+        public IReadOnlyCollection<Contract> Contracts => _contracts;
     }
 }

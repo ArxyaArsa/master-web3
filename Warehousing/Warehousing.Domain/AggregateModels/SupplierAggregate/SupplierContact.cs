@@ -13,6 +13,15 @@ namespace Warehousing.Domain.AggregateModels.SupplierAggregate
         public string Email { get; private set; }
         public string Fax { get; private set; }
 
+        public SupplierContact(string firstName, string lastName, string phone, string email, string fax)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Phone = phone;
+            Email = email;
+            Fax = fax;
+        }
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return FirstName;

@@ -13,6 +13,16 @@ namespace Warehousing.Domain.AggregateModels.SupplierAggregate
         public string AddressLine1 { get; private set; }
         public string AddressLine2 { get; private set; }
 
+        public SupplierAddress(string state, string country, string postalcode, string addressline1, string addressline2)
+        {
+            // domain side validation
+            State = state ?? throw new ArgumentNullException(nameof(State));
+            Country = country ?? throw new ArgumentNullException(nameof(Country));
+            PostalCode = postalcode ?? throw new ArgumentNullException(nameof(PostalCode));
+            AddressLine1 = addressline1 ?? throw new ArgumentNullException(nameof(AddressLine1));
+            AddressLine2 = addressline2;
+        }
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return State;

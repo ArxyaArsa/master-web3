@@ -1,0 +1,215 @@
+﻿@{
+}
+
+<h1>Warehouses</h1>
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        <div class="row wh-table-container">
+            <table class="wh-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Type</th>
+                        <th>Occupated</th>
+                        <th>Weight Capacity</th>
+                        <th>Manager</th>
+                        <th>Parcel Count</th>
+                        <th>Parcel Total Weight</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <div class="clearfix"></div>
+            <div class="overlay table-overlay" style="display: none"><i class="fa fa-refresh fa-spin"></i></div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+
+@section styles {
+<style>
+    .wh-table-container .overlay.table-overlay {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgb(244,244,244,0.7);
+    }
+
+    .wh-table-container {
+        position: relative;
+    }
+
+    .wh-table-container .dataTables_processing {
+        display: none !important;
+    }
+
+    .wh-table-container .overlay.table-overlay .fa-refresh {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        font-size: 50px;
+        z-index: 100;
+        margin-left: -25px;
+        margin-top: -25px;
+    }
+</style>
+} 
+
+@section scripts {
+<script>
+    window.Warehouses = window.Warehouses || (function () {
+        var _selectors = {
+            Table: ".wh-table-container .wh-table",
+            Overlay: ".wh-table-container .overlay.table-overlay"
+        }
+
+        var _table = null;
+
+
+        function init() {
+            fillDataTable();
+        }
+
+        function fillDataTable() {
+
+            if (_table == null) {
+                _table = $(_selectors.Table).on('preXhr.dt', function (e, settings, data) {
+                    // callback before ajax call
+                    $(_selectors.Overlay).show();
+                }).on('xhr.dt', function (e, settings, json, xhr) {
+                    // callback after ajax call
+
+                    $(_selectors.Overlay).hide();
+                }).DataTable({
+                    lengthChange: true,
+                    autoWidth: false,
+                    processing: true,
+                    serverSide: true,
+                    searching: true,
+                    ordering: true,
+                    paging: true,
+                    info: true,
+                    order: [[0, "desc"]],
+                    pageLength: 10,
+                    searchDelay: 3000,
+                    lengthMenu: [5, 10, 25, 50, 100, 250, 500],
+                    dom: '<"row"<"col-sm-4"><"col-sm-4"><"col-sm-4"<"pull-right"f>>>rt<"row"<"col-sm-6"il><"col-sm-6"p>>',
+                    ajax: {
+                        url: "@Url.Action("GetWarehouses", "Resources")",
+                        data: function (d) {
+                            //d.drillInfo = _drillInfo
+
+                            return d;
+                        },
+                        type: "POST"
+                    },
+                    language: {
+                        processing: ''
+                    },
+                    columns: [
+                        {
+                            data: "Name",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                return `<span class='datacell'>${full.Name}</span>`;
+                            }
+                        },
+                        {
+                            data: "Description",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+
+                                var desc = "";
+
+                                if ((full.Description.length || 0) > 40) {
+                                    desc = full.Description.substring(0, 40);
+                                }
+
+                                return `<span class='datacell' title='${full.Description}'>${desc}</span>`;
+                            }
+                        },
+                        {
+                            data: "Type",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                return `<span class='datacell'>${full.Type}</span>`;
+                            }
+                        },
+                        {
+                            data: "Occupated",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                return `<span class='datacell'>${full.Occupated}</span>`;
+                            }
+                        },
+                        {
+                            data: "WeightCapacity",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                return `<span class='datacell'>${full.WeightCapacity}</span>`;
+                            }
+                        },
+                        {
+                            data: "Manager_FirstName",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                return `<span class='datacell'>${full.Manager_FirstName} ${Manager_LastName}</span>`;
+                            }
+                        },
+                        {
+                            data: "ParcelCount",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                return `<span class='datacell'>${full.ParcelCount}</span>`;
+                            }
+                        },
+                        {
+                            data: "ParcelWeight",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                return `<span class='datacell'>${full.ParcelWeight}</span>`;
+                            }
+                        },
+                        {
+                            data: "Id",
+                            orderable: false,
+                            className: "text-left",
+                            width: "120px",
+                            render: function (data, type, full, meta) {
+                                // action buttons
+                                return "";
+                            }
+                        }
+                    ]
+                });
+            }
+            else {
+                _table.draw();
+            }
+        }
+
+        return {
+            init: init
+        }
+    })();
+
+    $(document).ready(function () {
+        Warehouses.init();
+    });
+</script>
+}

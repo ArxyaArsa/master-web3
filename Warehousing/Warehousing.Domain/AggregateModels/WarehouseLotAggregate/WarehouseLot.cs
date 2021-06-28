@@ -13,7 +13,7 @@ namespace Warehousing.Domain.AggregateModels.WarehouseLotAggregate
         public string Type { get; private set; }            // 'freezer', 'dry'
         public string Occupated { get; private set; }       // 'empty', 'has-items', 'full' 
         public decimal WeightCapacity { get; private set; }
-        public decimal? LastInventoryChange { get; private set; }
+        public DateTime? LastInventoryChange { get; private set; }
         public WarehouseLotManager Manager { get; private set; }
     }
 }

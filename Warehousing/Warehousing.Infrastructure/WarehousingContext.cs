@@ -30,7 +30,9 @@ namespace Warehousing.Infrastructure
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.0")
                 .HasAnnotation(EntityConfigurationConstants.Relational_MaxIdentifierLength, 128)
-                .HasAnnotation(EntityConfigurationConstants.SqlServer_ValueGenerationStrategy, SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation(EntityConfigurationConstants.SqlServer_ValueGenerationStrategy, SqlServerValueGenerationStrategy.IdentityColumn)
+                //.ForSqlServerUseSequenceHiLo()
+                ;
 
             modelBuilder.ApplyConfiguration(new ParcelEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ContractEntityTypeConfiguration());

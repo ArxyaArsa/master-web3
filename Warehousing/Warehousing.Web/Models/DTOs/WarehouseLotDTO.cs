@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,6 +15,7 @@ namespace Warehousing.Web.Models.DTOs
         public string Occupated { get;  set; }
         public decimal WeightCapacity { get;  set; }
         public DateTime? LastInventoryChange { get;  set; }
+        //[DisplayName("Manager First Name")]
         public string Manager_FirstName { get;  set; }
         public string Manager_LastName { get;  set; }
         public string Manager_Phone { get;  set; }

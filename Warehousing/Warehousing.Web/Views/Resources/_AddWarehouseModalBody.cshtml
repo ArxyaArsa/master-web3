@@ -1,0 +1,11 @@
+﻿@model Warehousing.Web.Models.DTOs.WarehouseLotDTO
+
+<div class="row add-warehouse-form-container">
+    <form class="add-warehouse-form" onsubmit="return false;">
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.Name):</div>
+            <div class="col-sm-7">@Html.EditorFor(x => x.Name, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+        </div>
+    </form>
+</div>

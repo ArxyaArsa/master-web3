@@ -31,6 +31,15 @@
     </div>
 </div>
 
+@{
+    string modalClass = "test-modal-class";
+    await Html.RenderPartialAsync("~/Views/Shared/_Modal.cshtml", new ModalViewModel()
+    {
+        Title = "Add Warehouse",
+        UniqueClass = modalClass
+    });
+}
+
 @section styles {
 <style>
     .wh-table-container .overlay.table-overlay {
@@ -67,7 +76,9 @@
     window.Warehouses = window.Warehouses || (function () {
         var _selectors = {
             Table: ".wh-table-container .wh-table",
-            Overlay: ".wh-table-container .overlay.table-overlay"
+            Overlay: ".wh-table-container .overlay.table-overlay",
+            AddButton: ".wh-table-container .btn-add-warehouse",
+            Modal: ".@(modalClass)"
         }
 
         var _table = null;
@@ -75,6 +86,17 @@
 
         function init() {
             fillDataTable();
+            initEvents();
+        }
+
+        function initEvents() {
+
+            $(_selectors.AddButton).on('click', function () {
+                $(_selectors.Modal).data("modaljsobj").show({
+                    closeOnSave: true,
+                    bodyUrl: "@Url.Action("_AddWarehouseModalBody", "Resources", new { })"
+                });
+            });
         }
 
         function fillDataTable() {
@@ -82,11 +104,21 @@
             if (_table == null) {
                 _table = $(_selectors.Table).on('preXhr.dt', function (e, settings, data) {
                     // callback before ajax call
+                    $(_selectors.AddButton).prop("disabled", true);
                     $(_selectors.Overlay).show();
                 }).on('xhr.dt', function (e, settings, json, xhr) {
                     // callback after ajax call
 
+                    if ($(_selectors.AddButton).text() == "") {
+                        $(_selectors.AddButton).text("Add Warehouse");
+                        $(_selectors.AddButton).addClass("btn");
+                        $(_selectors.AddButton).addClass("btn-primary");
+                    }
+
+                    $(_selectors.AddButton).prop("disabled", false);
                     $(_selectors.Overlay).hide();
+
+                    return xhr.responseJSON;
                 }).DataTable({
                     lengthChange: true,
                     autoWidth: false,
@@ -98,9 +130,9 @@
                     info: true,
                     order: [[0, "desc"]],
                     pageLength: 10,
-                    searchDelay: 3000,
+                    searchDelay: 2000,
                     lengthMenu: [5, 10, 25, 50, 100, 250, 500],
-                    dom: '<"row"<"col-sm-4"><"col-sm-4"><"col-sm-4"<"pull-right"f>>>rt<"row"<"col-sm-6"il><"col-sm-6"p>>',
+                    dom: '<"row"<"col-sm-4"<"pull-left"<"btn-add-warehouse">>><"col-sm-4"><"col-sm-4"<"pull-right"f>>>rt<"row"<"col-sm-6"i><"col-sm-6"p>><"row"<"col-sm-12"l>>',
                     ajax: {
                         url: "@Url.Action("GetWarehouses", "Resources")",
                         data: function (d) {
@@ -115,78 +147,78 @@
                     },
                     columns: [
                         {
-                            data: "Name",
+                            data: "name",
                             orderable: true,
                             className: "text-left",
                             render: function (data, type, full, meta) {
-                                return `<span class='datacell'>${full.Name}</span>`;
+                                return `<span class='datacell'>${full.name}</span>`;
                             }
                         },
                         {
-                            data: "Description",
+                            data: "description",
                             orderable: true,
                             className: "text-left",
                             render: function (data, type, full, meta) {
 
-                                var desc = "";
+                                var desc = full.description;
 
-                                if ((full.Description.length || 0) > 40) {
-                                    desc = full.Description.substring(0, 40);
+                                if (((full.description || "").length || 0) > 40) {
+                                    desc = full.description.substring(0, 40);
                                 }
 
-                                return `<span class='datacell' title='${full.Description}'>${desc}</span>`;
+                                return `<span class='datacell' title='${full.description}'>${desc}</span>`;
                             }
                         },
                         {
-                            data: "Type",
+                            data: "type",
                             orderable: true,
                             className: "text-left",
                             render: function (data, type, full, meta) {
-                                return `<span class='datacell'>${full.Type}</span>`;
+                                return `<span class='datacell'>${full.type}</span>`;
                             }
                         },
                         {
-                            data: "Occupated",
+                            data: "occupated",
                             orderable: true,
                             className: "text-left",
                             render: function (data, type, full, meta) {
-                                return `<span class='datacell'>${full.Occupated}</span>`;
+                                return `<span class='datacell'>${full.occupated}</span>`;
                             }
                         },
                         {
-                            data: "WeightCapacity",
+                            data: "weightCapacity",
                             orderable: true,
                             className: "text-left",
                             render: function (data, type, full, meta) {
-                                return `<span class='datacell'>${full.WeightCapacity}</span>`;
+                                return `<span class='datacell'>${full.weightCapacity}</span>`;
                             }
                         },
                         {
-                            data: "Manager_FirstName",
+                            data: "manager_FirstName",
                             orderable: true,
                             className: "text-left",
                             render: function (data, type, full, meta) {
-                                return `<span class='datacell'>${full.Manager_FirstName} ${Manager_LastName}</span>`;
+                                return `<span class='datacell'>${full.manager_FirstName} ${full.manager_LastName}</span>`;
                             }
                         },
                         {
-                            data: "ParcelCount",
+                            data: "parcelCount",
                             orderable: true,
                             className: "text-left",
                             render: function (data, type, full, meta) {
-                                return `<span class='datacell'>${full.ParcelCount}</span>`;
+                                return `<span class='datacell'>${full.parcelCount}</span>`;
                             }
                         },
                         {
-                            data: "ParcelWeight",
+                            data: "parcelWeight",
                             orderable: true,
                             className: "text-left",
                             render: function (data, type, full, meta) {
-                                return `<span class='datacell'>${full.ParcelWeight}</span>`;
+                                return `<span class='datacell'>${full.parcelWeight}</span>`;
                             }
                         },
                         {
-                            data: "Id",
+                            data: "id",
                             orderable: false,
                             className: "text-left",
                             width: "120px",

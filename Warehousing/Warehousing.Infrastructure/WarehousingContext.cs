@@ -39,11 +39,15 @@ namespace Warehousing.Infrastructure
             modelBuilder.ApplyConfiguration(new SupplierEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ParcelTypeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new WarehouseLotEntityTypeConfiguration());
+
+            System.Diagnostics.Debug.WriteLine("WarehousingContext::OnModelCreating ->" + this.GetHashCode());
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.EnableSensitiveDataLogging();
+
+            System.Diagnostics.Debug.WriteLine("WarehousingContext::OnConfiguring ->" + this.GetHashCode());
         }
     }
 }

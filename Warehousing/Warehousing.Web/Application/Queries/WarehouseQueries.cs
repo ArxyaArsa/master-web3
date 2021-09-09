@@ -75,8 +75,8 @@ GROUP BY
                     Data = res,
                     Draw = dtrequest.Draw,
                     Error = null,
-                    TotalRecords = countAll,
-                    TotalRecordsFiltered = countFiltered,
+                    RecordsTotal = countAll,
+                    RecordsFiltered = countFiltered,
                     AdditionalParameters = new Dictionary<string, object>()
                 };
             }

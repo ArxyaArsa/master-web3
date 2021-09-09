@@ -3,22 +3,22 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Warehousing.Domain.AggregateModels.ParcelAggregate;
+using Warehousing.Domain.AggregateModels.WarehouseLotAggregate;
 
 namespace Warehousing.Infrastructure.Repositories
 {
-    public class ParcelRepository : IParcelRepository
+    public class WarehouseLotRepository : IWarehouseLotRepository
     {
         private WarehousingContext _context;
-        private DbSet<Parcel> _dbSet;
+        private DbSet<WarehouseLot> _dbSet;
 
-        public ParcelRepository(WarehousingContext context)
+        public WarehouseLotRepository(WarehousingContext context)
         {
             _context = context;
-            _dbSet = context.Parcels;
+            _dbSet = context.WarehouseLots;
         }
 
-        public Parcel Add(Parcel p)
+        public WarehouseLot Add(WarehouseLot p)
         {
             var ret = _dbSet.Add(p);
             _context.SaveChanges();
@@ -26,12 +26,12 @@ namespace Warehousing.Infrastructure.Repositories
             return ret.Entity;
         }
 
-        public Task<Parcel> GetAsync(int pId)
+        public Task<WarehouseLot> GetAsync(int pId)
         {
             return _dbSet.FindAsync(pId);
         }
 
-        public void Update(Parcel p)
+        public void Update(WarehouseLot p)
         {
             _context.SaveChanges(); // all actual changes will be done through the Domain entity methods
         }

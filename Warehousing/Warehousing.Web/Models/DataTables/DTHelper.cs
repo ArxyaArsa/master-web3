@@ -15,7 +15,7 @@ FROM (
     {baseQuery}
 ) TMP
 {(
-((countQuery && noFilter) || ((request.Search?.Value ?? "") != "" && (columnsToSearch != null && columnsToSearch.Count > 0))) ? "" : 
+((countQuery && noFilter) || !((request.Search?.Value ?? "") != "" && (columnsToSearch != null && columnsToSearch.Count > 0))) ? "" : 
 $"WHERE {columnsToSearch.Select(x => x + $" LIKE '%{request.Search.Value}%'").Aggregate((c, n) => c + " OR " + n)}"
 )}
 {(countQuery ? "/*" : "")}

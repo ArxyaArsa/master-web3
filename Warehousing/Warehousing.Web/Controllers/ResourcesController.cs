@@ -42,13 +42,19 @@ namespace Warehousing.Web.Controllers
                     Data = new List<WarehouseLotDTO>(),
                     Draw = request.Draw,
                     Error = error,
-                    TotalRecords = 0,
-                    TotalRecordsFiltered = 0,
+                    RecordsTotal = 0,
+                    RecordsFiltered = 0,
                     AdditionalParameters = new Dictionary<string, object>()
                 };
             }
 
             return Json(res);
+        }
+
+        [HttpGet]
+        public IActionResult _AddWarehouseModalBody()
+        {
+            return PartialView();
         }
     }
 }

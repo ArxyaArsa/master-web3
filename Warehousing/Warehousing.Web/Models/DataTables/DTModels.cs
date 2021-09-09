@@ -129,11 +129,11 @@ namespace Warehousing.Web.Models.DataTables
         /// <summary>
         /// Gets total record count (total records available on database).
         /// </summary>
-        public int TotalRecords { get; set; }
+        public int RecordsTotal { get; set; }
         /// <summary>
         /// Gets filtered record count (total records available after filtering).
         /// </summary>
-        public int TotalRecordsFiltered { get; set; }
+        public int RecordsFiltered { get; set; }
         /// <summary>
         /// Gets data object (collection).
         /// </summary>

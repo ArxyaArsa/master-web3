@@ -1,0 +1,166 @@
+﻿@model ModalViewModel
+
+@{ 
+    var rnd = new Random((int)(DateTime.Now.Ticks % int.MaxValue));
+    uint uid = (((uint)rnd.Next(0, 255)) << 24) + (((uint)rnd.Next(0, 255)) << 16) + (((uint)rnd.Next(0, 255)) << 8) + (uint)rnd.Next(0, 255);
+    var modelClass = Html.Raw(Model.UniqueClass).ToString();
+}
+
+<div class="modal modal-@uid @modelClass" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title pull-left">@(Html.Raw(Model.Title ?? ""))</h5>
+                <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>@Html.Raw(Model.Body ?? "")</p>
+            </div>
+            
+            @if (Model.HasSaveButton || Model.HasCancelButton)
+            {
+                <text>
+                    <div class="modal-footer">
+                        @if (Model.HasSaveButton)
+                        {
+                            <text>
+                                <button type="button" class="btn btn-primary modal-save-button">@Html.Raw(Model.SaveButtonText ?? "")</button>
+                            </text>
+                        }
+                
+                        @if (Model.HasCancelButton)
+                        {
+                            <text>
+                                <button type="button" class="btn btn-secondary modal-cancel-button" data-dismiss="modal">@Html.Raw(Model.CancelButtonText ?? "")</button>
+                            </text>
+                        }
+                    </div>
+                </text>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    window.modal@(uid) = window.modal@(uid) || (function () {
+
+        /// private constants and variables
+
+        var _selectors = {
+            Container: ".modal-@(uid)",
+            Title: ".modal-@(uid) .modal-title",
+            Body: ".modal-@(uid) .modal-body",
+            SaveBtn: ".modal-@(uid) .modal-save-button",
+            CancelBtn: ".modal-@(uid) .modal-cancel-button"
+        };
+
+        var _bodyUrl = "@(Html.Raw(Model.BodyURL ?? ""))";
+        var _saveCallback = null;
+        var _closeOnSave = false;
+
+
+        /// public methods
+            
+        function init() {
+
+            initEvents();
+
+            var $this = $(_selectors.Container);
+            $this.detach();
+            $('body').append($this);
+
+            //$this.modal({});
+
+            $this.data("modaljsobj", this);
+        }
+
+        function show(opts) {
+
+            if (typeof opts != 'undefined') {
+                if (typeof opts.bodyUrl != 'undefined' && opts.bodyUrl != "")
+                    _bodyUrl = opts.bodyUrl;
+
+                if (typeof opts.saveCallback == 'function')
+                    _saveCallback = opts.saveCallback;
+                else
+                    _saveCallback = null;
+
+                if (typeof opts.closeOnSave != 'undefined')
+                    _closeOnSave = opts.closeOnSave;
+                else
+                    _closeOnSave = false;
+            }
+
+            if (_bodyUrl != "") {
+                $.ajax({
+                    url: _bodyUrl,
+                    success: function (response) {
+                        renderBody(response);
+                        showOnly();
+                    },
+                    statusCode: {
+                        404: function () {
+                            renderBody("not found!");
+                            showOnly();
+                        }
+                    }
+                })
+            }
+            else {
+                showOnly();
+            }
+        }
+
+        function hide() {
+            $(_selectors.Container).modal('hide');
+        }
+
+        function assignSaveCallback(fn) {
+            _saveCallback = fn;
+        }
+
+
+        /// private methods
+
+        function initEvents() {
+            $(_selectors.SaveBtn).on('click', _evtSave);
+        }
+
+        function renderBody(newBody) {
+            $(_selectors.Body).html(newBody);
+        }
+
+        function showOnly() {
+            $(_selectors.Container).modal('show');
+        }
+
+
+        /// events
+
+        function _evtSave(btn) {
+
+            if (typeof _saveCallback == 'function' && _saveCallback != null)
+                _saveCallback();
+
+            if (_closeOnSave == true)
+                hide();
+        }
+
+        /// return object
+
+        return {
+            init: init,
+            show: show,
+            hide: hide,
+            assignSaveCallback: assignSaveCallback
+        }
+    })();
+
+    document.addEventListener('DOMContentLoaded', function () {
+        $(document).ready(function () {
+            window.modal@(uid).init();
+        });
+    }, false);
+</script>

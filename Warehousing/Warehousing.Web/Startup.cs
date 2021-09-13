@@ -1,18 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Warehousing.Infrastructure;
+using Warehousing.Infrastructure.Repositories;
 using Warehousing.Web.Application.Queries;
 
 namespace Warehousing.Web
@@ -39,6 +33,7 @@ namespace Warehousing.Web
             services.AddDbContext<WarehousingContext>(o => o.UseSqlServer(Configuration.GetConnectionString("WarehousingConnection")));
 
             services.AddQueriesDependencies(Configuration);
+            services.AddRepositoriesDependencies();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

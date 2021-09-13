@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Warehousing.Domain.SeedWork;
 
-namespace Warehousing.Domain.AggregateModels.ParcelAggregate
+namespace Warehousing.Domain.AggregateModels.WarehouseLotAggregate
 {
     public class ParcelType : Entity
     {
@@ -17,5 +17,7 @@ namespace Warehousing.Domain.AggregateModels.ParcelAggregate
         public int? DryLifetime { get; private set; }
 
         public virtual IReadOnlyCollection<Parcel> Parcels { get; set; }
+
+        public ParcelType() { }
     }
 }

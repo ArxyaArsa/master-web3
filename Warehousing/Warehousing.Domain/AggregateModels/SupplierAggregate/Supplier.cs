@@ -24,7 +24,9 @@ namespace Warehousing.Domain.AggregateModels.SupplierAggregate
         private readonly List<Contract> _contracts;
         public IReadOnlyCollection<Contract> Contracts => _contracts;
 
-        public Supplier(string name, string description, SupplierContact contact, SupplierAddress address)
+        public Supplier() { }
+
+        public Supplier(string name, string description, SupplierContact contact, SupplierAddress address) : this()
         {
             Name = name;
             Description = description;

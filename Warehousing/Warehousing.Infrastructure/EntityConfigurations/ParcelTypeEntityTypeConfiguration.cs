@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Warehousing.Domain.AggregateModels.ParcelAggregate;
+using Warehousing.Domain.AggregateModels.WarehouseLotAggregate;
 
 namespace Warehousing.Infrastructure.EntityConfigurations
 {

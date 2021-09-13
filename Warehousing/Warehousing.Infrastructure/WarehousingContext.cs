@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Warehousing.Domain.AggregateModels.ParcelAggregate;
 using Warehousing.Domain.AggregateModels.SupplierAggregate;
 using Warehousing.Domain.AggregateModels.WarehouseLotAggregate;
 using Warehousing.Infrastructure.EntityConfigurations;
@@ -20,13 +19,15 @@ namespace Warehousing.Infrastructure
         public DbSet<ParcelType> ParcelTypes { get; set; }
         public DbSet<WarehouseLot> WarehouseLots { get; set; }
 
-        public WarehousingContext(DbContextOptions<WarehousingContext> options)
+        public WarehousingContext(DbContextOptions<WarehousingContext> options) : base(options)
         {
             System.Diagnostics.Debug.WriteLine("WarehousingContext::ctor ->" + this.GetHashCode());
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.0")
                 .HasAnnotation(EntityConfigurationConstants.Relational_MaxIdentifierLength, 128)
@@ -45,7 +46,7 @@ namespace Warehousing.Infrastructure
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.EnableSensitiveDataLogging();
+            //optionsBuilder.EnableSensitiveDataLogging();
 
             System.Diagnostics.Debug.WriteLine("WarehousingContext::OnConfiguring ->" + this.GetHashCode());
         }

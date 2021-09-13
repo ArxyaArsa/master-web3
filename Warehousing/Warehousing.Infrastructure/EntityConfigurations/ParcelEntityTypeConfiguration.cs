@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Warehousing.Domain.AggregateModels.ParcelAggregate;
+using Warehousing.Domain.AggregateModels.WarehouseLotAggregate;
 
 namespace Warehousing.Infrastructure.EntityConfigurations
 {
@@ -29,14 +29,14 @@ namespace Warehousing.Infrastructure.EntityConfigurations
 
             builder.HasKey(x => x.Id);
 
-            builder.HasOne("Contract")
-                .WithMany()
-                .HasForeignKey("ContractId")
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.HasOne("Contract")
+            //    .WithMany()
+            //    .HasForeignKey("ContractId")
+            //    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne("WarehouseLot")
-                .WithMany()
-                .HasForeignKey("WarehouseLotId")
+            builder.HasOne(x => x.WarehouseLot)
+                .WithMany(x => x.Parcels)
+                .HasForeignKey(x => x.WarehouseLotId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.ParcelType)

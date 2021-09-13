@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Warehousing.Domain.SeedWork;
 
-namespace Warehousing.Domain.AggregateModels.ParcelAggregate
+namespace Warehousing.Domain.AggregateModels.WarehouseLotAggregate
 {
     public class Parcel : Entity, IAggregateRoot
     {
@@ -18,5 +18,8 @@ namespace Warehousing.Domain.AggregateModels.ParcelAggregate
         public DateTime? RemovedDate { get; private set; }
 
         public virtual ParcelType ParcelType { get; private set; }
+        public virtual WarehouseLot WarehouseLot { get; private set; }
+
+        public Parcel() { }
     }
 }

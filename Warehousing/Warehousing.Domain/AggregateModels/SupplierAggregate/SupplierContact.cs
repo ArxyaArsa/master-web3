@@ -13,7 +13,9 @@ namespace Warehousing.Domain.AggregateModels.SupplierAggregate
         public string Email { get; private set; }
         public string Fax { get; private set; }
 
-        public SupplierContact(string firstName, string lastName, string phone, string email, string fax)
+        public SupplierContact() { }
+
+        public SupplierContact(string firstName, string lastName, string phone, string email, string fax) : this()
         {
             FirstName = firstName;
             LastName = lastName;

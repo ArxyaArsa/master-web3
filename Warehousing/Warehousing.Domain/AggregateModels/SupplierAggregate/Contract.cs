@@ -24,7 +24,9 @@ namespace Warehousing.Domain.AggregateModels.SupplierAggregate
         //public readonly List<ParcelAggregate.Parcel> _parcels;
         //public IReadOnlyCollection<ParcelAggregate.Parcel> Parcels => _parcels;
 
-        public Contract(Supplier s, string desc, DateTime startDate, DateTime paymentDueUntil, bool isPayed = false)
+        public Contract() { }
+
+        public Contract(Supplier s, string desc, DateTime startDate, DateTime paymentDueUntil, bool isPayed = false) : this()
         {
             Description = desc;
             StartDate = startDate;

@@ -6,16 +6,16 @@
 }
 
 <div class="row add-warehouse-form-container add-warehouse-form-container-@(uid) form-group">
-    <form class="add-warehouse-form" method="post" action="@Url.Action("AddWarehouse", "Resources", new { })">
+    <form class="add-warehouse-form" method="post" action="@Url.Action((Model.Id != 0 ? "EditWarehouse" : "AddWarehouse"), "Resources", new { })">
         <div class="row">
-            <div class="col-sm-1"></div>
+            <div class="col-sm-1">@Html.HiddenFor(x => x.Id, new { Id = (string)null, Value = Model.Id })</div>
             <div class="col-sm-3">@Html.DisplayNameFor(x => x.Name):</div>
-            <div class="col-sm-7">@Html.EditorFor(x => x.Name, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+            <div class="col-sm-7">@Html.EditorFor(x => x.Name, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Value = Model.Name } })</div>
         </div>
         <div class="row">
             <div class="col-sm-1"></div>
             <div class="col-sm-3">@Html.DisplayNameFor(x => x.Description):</div>
-            <div class="col-sm-7">@Html.TextAreaFor(x => x.Description, new { Class = "form-control", Id = (string)null, Rows = 2 })</div>
+            <div class="col-sm-7">@Html.TextAreaFor(x => x.Description, new { Class = "form-control", Id = (string)null, Rows = 2, Value = Model.Description })</div>
         </div>
         <div class="row">
             <div class="col-sm-1"></div>
@@ -25,7 +25,7 @@
                 {
                     new SelectListItem("Dry", "dry"),
                     new SelectListItem("Freezer", "freezer"),
-                }, null, new { Class = "form-control", Id = (string)null })
+                }, null, new { Class = "form-control", Id = (string)null, Value = Model.Type })
             </div>
         </div>
         @*<div class="row">
@@ -37,13 +37,13 @@
                     new SelectListItem("Empty", "empty"),
                     new SelectListItem("Has Items", "has-items"),
                     new SelectListItem("Full", "full"),
-                }, null, new { Class = "form-control", Id = (string)null })
+                }, null, new { Class = "form-control", Id = (string)null, Value = Model.Occupated })
             </div>
         </div>*@
         <div class="row">
             <div class="col-sm-1"></div>
             <div class="col-sm-3">@Html.DisplayNameFor(x => x.WeightCapacity) (kg):</div>
-            <div class="col-sm-7">@Html.EditorFor(x => x.WeightCapacity, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Type = "number", Min = 0, Max = 100000, Step = 1, Value = 0 } })</div>
+            <div class="col-sm-7">@Html.EditorFor(x => x.WeightCapacity, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Type = "number", Min = 0, Max = 100000, Step = 1, Value = Model.WeightCapacity } })</div>
         </div>
         <div class="row" style="margin-top: 10px">
             <div class="row">
@@ -53,22 +53,22 @@
             <div class="row">
                 <div class="col-sm-2"></div>
                 <div class="col-sm-3">@Html.DisplayNameFor(x => x.Manager_FirstName):</div>
-                <div class="col-sm-6">@Html.EditorFor(x => x.Manager_FirstName, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+                <div class="col-sm-6">@Html.EditorFor(x => x.Manager_FirstName, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Value = Model.Manager_FirstName } })</div>
             </div>
             <div class="row">
                 <div class="col-sm-2"></div>
                 <div class="col-sm-3">@Html.DisplayNameFor(x => x.Manager_LastName):</div>
-                <div class="col-sm-6">@Html.EditorFor(x => x.Manager_LastName, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+                <div class="col-sm-6">@Html.EditorFor(x => x.Manager_LastName, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Value = Model.Manager_LastName } })</div>
             </div>
             <div class="row">
                 <div class="col-sm-2"></div>
                 <div class="col-sm-3">@Html.DisplayNameFor(x => x.Manager_Email):</div>
-                <div class="col-sm-6">@Html.EditorFor(x => x.Manager_Email, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+                <div class="col-sm-6">@Html.EditorFor(x => x.Manager_Email, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Value = Model.Manager_Email } })</div>
             </div>
             <div class="row">
                 <div class="col-sm-2"></div>
                 <div class="col-sm-3">@Html.DisplayNameFor(x => x.Manager_Phone):</div>
-                <div class="col-sm-6">@Html.EditorFor(x => x.Manager_Phone, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+                <div class="col-sm-6">@Html.EditorFor(x => x.Manager_Phone, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Value = Model.Manager_Phone } })</div>
             </div>
         </div>
     </form>

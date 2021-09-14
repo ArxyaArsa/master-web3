@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +17,13 @@ namespace Warehousing.Web.Controllers
         #region Attributes and Ctors
         private WarehouseQueries _warehouseQueries;
         private IWarehouseLotRepository _warehouseLotRepository;
+        private readonly IMapper _mapper;
 
-        public ResourcesController(WarehouseQueries warehouseQueries, IWarehouseLotRepository warehouseLotRepository)
+        public ResourcesController(WarehouseQueries warehouseQueries, IWarehouseLotRepository warehouseLotRepository, IMapper mapper)
         {
             _warehouseQueries = warehouseQueries;
             _warehouseLotRepository = warehouseLotRepository;
+            _mapper = mapper;
         }
         #endregion
 
@@ -59,9 +62,17 @@ namespace Warehousing.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult _AddWarehouseModalBody()
+        public async Task<IActionResult> _AddEditWarehouseModalBody(int? id)
         {
-            return PartialView();
+            var model = new WarehouseLotDTO();
+
+            if ((id ?? 0) != 0)
+            {
+                var wh = await _warehouseLotRepository.GetAsync(id.Value);
+                model = _mapper.Map<WarehouseLotDTO>(wh);
+            }
+
+            return PartialView(model);
         }
 
         [HttpPost]
@@ -72,6 +83,30 @@ namespace Warehousing.Web.Controllers
                 var wh = new WarehouseLot(wld.Name, wld.Description, wld.Type, wld.Occupated, wld.WeightCapacity, wld.Manager_FirstName, wld.Manager_LastName, wld.Manager_Email, wld.Manager_Phone);
 
                 _warehouseLotRepository.Add(wh);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception e)
+            {
+                // more error handling? dev mode?
+                return View("~/Views/Shared/Error.cshtml", new ErrorViewModel(e.Message + " - " + (e.InnerException?.Message)));
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditWarehouse([Bind] WarehouseLotDTO wld)
+        {
+            try
+            {
+                var wh = await _warehouseLotRepository.GetAsync(wld.Id);
+
+                wh.UpdateName(wld.Name);
+                wh.UpdateDescription(wld.Description);
+                wh.UpdateType(wld.Type);
+                wh.UpdateWeightCapacity(wld.WeightCapacity);
+                wh.UpdateManagerInfo(wld.Manager_FirstName, wld.Manager_LastName, wld.Manager_Email, wld.Manager_Phone);
+
+                _warehouseLotRepository.Update(wh);
 
                 return RedirectToAction("Index");
             }

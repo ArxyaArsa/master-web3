@@ -72,13 +72,14 @@
 } 
 
 @section scripts {
-<script>
+    <script>
     window.Warehouses = window.Warehouses || (function () {
         var _selectors = {
             Table: ".wh-table-container .wh-table",
             Overlay: ".wh-table-container .overlay.table-overlay",
             AddButton: ".wh-table-container .btn-add-warehouse",
-            Modal: ".@(modalClass)"
+            Modal: ".@(modalClass)",
+            _EditButton: ".btn-edit-warehouse"
         }
 
         var _table = null;
@@ -94,7 +95,14 @@
             $(_selectors.AddButton).on('click', function () {
                 $(_selectors.Modal).data("modaljsobj").show({
                     closeOnSave: true,
-                    bodyUrl: "@Url.Action("_AddWarehouseModalBody", "Resources", new { })"
+                    bodyUrl: "@Url.Action("_AddEditWarehouseModalBody", "Resources", new { })"
+                });
+            });
+
+            $(_selectors.Table).on('click', _selectors._EditButton, function () {
+                $(_selectors.Modal).data("modaljsobj").show({
+                    closeOnSave: true,
+                    bodyUrl: "@Url.Action("_AddEditWarehouseModalBody", "Resources", new { })/" + $(this).data("warehouse-id")
                 });
             });
         }
@@ -224,7 +232,7 @@
                             width: "120px",
                             render: function (data, type, full, meta) {
                                 // action buttons
-                                return "";
+                                return `<button class="btn btn-primary btn-edit-warehouse" data-warehouse-id="${full.id}">Edit <span class="fa fa-edit"></span></button>`;
                             }
                         }
                     ]
@@ -244,5 +252,5 @@
     $(document).ready(function () {
         Warehouses.init();
     });
-</script>
+    </script>
 }

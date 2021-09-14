@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Warehousing.Infrastructure;
 using Warehousing.Infrastructure.Repositories;
+using Warehousing.Web.Application.AutoMapperProfiles;
 using Warehousing.Web.Application.Queries;
 
 namespace Warehousing.Web
@@ -34,7 +35,8 @@ namespace Warehousing.Web
 
             services.AddQueriesDependencies(Configuration);
             services.AddRepositoriesDependencies();
-
+            services.AddAutoMapperDependencies();
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

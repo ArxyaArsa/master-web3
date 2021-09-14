@@ -5,8 +5,8 @@
     uint uid = (((uint)rnd.Next(0, 255)) << 24) + (((uint)rnd.Next(0, 255)) << 16) + (((uint)rnd.Next(0, 255)) << 8) + (uint)rnd.Next(0, 255);
 }
 
-<div class="row add-warehouse-form-container add-warehouse-form-container-@(uid) form-group">
-    <form class="add-warehouse-form" method="post" action="@Url.Action((Model.Id != 0 ? "EditWarehouse" : "AddWarehouse"), "Resources", new { })">
+<div class="row add-edit-warehouse-form-container add-edit-warehouse-form-container-@(uid) form-group">
+    <form class="add-edit-warehouse-form" method="post" action="@Url.Action((Model.Id != 0 ? "EditWarehouse" : "AddWarehouse"), "Resources", new { })">
         <div class="row">
             <div class="col-sm-1">@Html.HiddenFor(x => x.Id, new { Id = (string)null, Value = Model.Id })</div>
             <div class="col-sm-3">@Html.DisplayNameFor(x => x.Name):</div>
@@ -28,18 +28,6 @@
                 }, null, new { Class = "form-control", Id = (string)null, Value = Model.Type })
             </div>
         </div>
-        @*<div class="row">
-            <div class="col-sm-1"></div>
-            <div class="col-sm-3">@Html.DisplayNameFor(x => x.Occupated):</div>
-            <div class="col-sm-7">
-                @Html.DropDownListFor(x => x.Occupated, new List<SelectListItem>()
-                {
-                    new SelectListItem("Empty", "empty"),
-                    new SelectListItem("Has Items", "has-items"),
-                    new SelectListItem("Full", "full"),
-                }, null, new { Class = "form-control", Id = (string)null, Value = Model.Occupated })
-            </div>
-        </div>*@
         <div class="row">
             <div class="col-sm-1"></div>
             <div class="col-sm-3">@Html.DisplayNameFor(x => x.WeightCapacity) (kg):</div>
@@ -77,40 +65,8 @@
 <script>
     $(document).ready(function () {
         let $modal = $(window.Warehouses.selectors.Modal).data('modaljsobj');
-
         $modal.assignSaveCallback(function () {
-            @*let dataArray = $('.add-warehouse-form-container-@(uid) form.add-warehouse-form').serializeArray();
-            let data = {};
-
-            $.map(dataArray, function (e, i) {
-                data[e.name] = e.value;
-            });
-
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("AddWarehouse", "Resources", new { })',
-                dataType: 'html',
-                contentType: 'application/json',
-                async: true,
-                cache: false,
-                timeout: 30000,
-                data: JSON.stringify({
-                    wld: data
-                }),
-                success: function (data) {
-                    console.log(data);
-                },
-                error: function (data, xr) {
-                    //var obj = JSON.parse(data.responseText);
-                    //if (obj.Message != "InProcessing") {
-                    //    showalert("error", obj.Message);
-                    //}
-
-                    console.log(data);
-                }
-            });*@
-
-            $('.add-warehouse-form-container-@(uid) form.add-warehouse-form').submit();
+            $('.add-edit-warehouse-form-container-@(uid) form.add-edit-warehouse-form').submit();
         });
     });
 </script>

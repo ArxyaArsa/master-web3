@@ -30,7 +30,7 @@ namespace Warehousing.Domain.AggregateModels.WarehouseLotAggregate
             Name = name;
             Description = desc;
             Type = type;
-            Occupated = occupated;
+            Occupated = occupated ?? "empty";
             WeightCapacity = weightCapacity;
             Manager = new WarehouseLotManager(manFirstName, manLastName, manEmail, manPhone);
         }

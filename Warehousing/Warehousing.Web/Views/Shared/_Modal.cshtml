@@ -60,9 +60,8 @@
         var _saveCallback = null;
         var _closeOnSave = false;
 
-
         /// public methods
-            
+
         function init() {
 
             initEvents();
@@ -79,6 +78,12 @@
         function show(opts) {
 
             if (typeof opts != 'undefined') {
+                if (typeof opts.body != 'undefined')
+                    $(_selectors.Body).html(opts.body);
+
+                if (typeof opts.title != 'undefined')
+                    $(_selectors.Title).html(opts.title);
+
                 if (typeof opts.bodyUrl != 'undefined' && opts.bodyUrl != "")
                     _bodyUrl = opts.bodyUrl;
 

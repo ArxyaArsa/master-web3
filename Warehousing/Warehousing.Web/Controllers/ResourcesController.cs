@@ -75,6 +75,23 @@ namespace Warehousing.Web.Controllers
             return PartialView(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> _DeleteWarehouseModalBody(int? id)
+        {
+            if ((id ?? 0) != 0)
+            {
+                var wh = await _warehouseLotRepository.GetAsync(id.Value);
+                var model = _mapper.Map<WarehouseLotDTO>(wh);
+
+                return PartialView(model);
+            }
+            else
+            {
+                // more error handling? dev mode?
+                return View("~/Views/Shared/Error.cshtml", new ErrorViewModel("No such warehouse! Please go back and try again!"));
+            }
+        }
+
         [HttpPost]
         public IActionResult AddWarehouse([Bind] WarehouseLotDTO wld)
         {
@@ -114,6 +131,24 @@ namespace Warehousing.Web.Controllers
             {
                 // more error handling? dev mode?
                 return View("~/Views/Shared/Error.cshtml", new ErrorViewModel(e.Message + " - " + (e.InnerException?.Message)));
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteWarehouse(int id)
+        {
+            try
+            {
+                var wh = await _warehouseLotRepository.GetAsync(id);
+
+                _warehouseLotRepository.Remove(wh);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                // more error handling? dev mode?
+                return BadRequest("An Error occured! Cannot delete this Warehouse! --> " + e.Message + " - " + (e.InnerException?.Message));
             }
         }
     }

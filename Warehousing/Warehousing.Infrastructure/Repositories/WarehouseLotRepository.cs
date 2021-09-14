@@ -31,6 +31,12 @@ namespace Warehousing.Infrastructure.Repositories
             return _dbSet.FindAsync(pId);
         }
 
+        public void Remove(WarehouseLot wl)
+        {
+            _dbSet.Remove(wl);
+            _context.SaveChanges();
+        }
+
         public void Update(WarehouseLot p)
         {
             _context.SaveChanges(); // all actual changes will be done through the Domain entity methods

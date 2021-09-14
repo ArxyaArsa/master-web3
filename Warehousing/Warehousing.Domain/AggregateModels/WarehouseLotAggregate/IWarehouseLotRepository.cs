@@ -7,6 +7,7 @@ namespace Warehousing.Domain.AggregateModels.WarehouseLotAggregate
     {
         WarehouseLot Add(WarehouseLot wl);
         void Update(WarehouseLot wl);
+        void Remove(WarehouseLot wl);
         Task<WarehouseLot> GetAsync(int wlId);
     }
 }

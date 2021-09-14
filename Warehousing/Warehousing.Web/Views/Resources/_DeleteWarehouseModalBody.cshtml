@@ -1,0 +1,81 @@
+﻿@model Warehousing.Web.Models.DTOs.WarehouseLotDTO
+
+@{ 
+    var rnd = new Random((int)(DateTime.Now.Ticks % int.MaxValue));
+    uint uid = (((uint)rnd.Next(0, 255)) << 24) + (((uint)rnd.Next(0, 255)) << 16) + (((uint)rnd.Next(0, 255)) << 8) + (uint)rnd.Next(0, 255);
+}
+
+<div class="row delete-warehouse-form-container delete-warehouse-form-container-@(uid) form-group">
+    <div class="row"><div class="col-md-1"></div><div class="col-md-11"><p>Are you sure you want to delete this Warehouse?</p><br /></div></div>
+    <div class="row">
+        <div class="col-sm-1">@Html.HiddenFor(x => x.Id, new { Id = (string)null, Value = Model.Id })</div>
+        <div class="col-sm-3">@Html.DisplayNameFor(x => x.Name):</div>
+        <div class="col-sm-7">@Html.EditorFor(x => x.Name, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Value = Model.Name, Disabled = "true" } })</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-3">@Html.DisplayNameFor(x => x.Description):</div>
+        <div class="col-sm-7">@Html.TextAreaFor(x => x.Description, new { Class = "form-control", Id = (string)null, Rows = 2, Value = Model.Description, Disabled = "true" })</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-3">@Html.DisplayNameFor(x => x.Type):</div>
+        <div class="col-sm-7">
+            @Html.DropDownListFor(x => x.Type, new List<SelectListItem>()
+            {
+                new SelectListItem("Dry", "dry"),
+                new SelectListItem("Freezer", "freezer"),
+            }, null, new { Class = "form-control", Id = (string)null, Value = Model.Type, Disabled = "true" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-3">@Html.DisplayNameFor(x => x.WeightCapacity) (kg):</div>
+        <div class="col-sm-7">@Html.EditorFor(x => x.WeightCapacity, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Type = "number", Min = 0, Max = 100000, Step = 1, Value = Model.WeightCapacity, Disabled = "true" } })</div>
+    </div>
+    <div class="row" style="margin-top: 10px">
+        <div class="row">
+            <div class="col-sm-7"></div>
+            <div class="col-sm-4"><lavel class="pull-right"><i>Manager Info</i></lavel></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.Manager_FirstName):</div>
+            <div class="col-sm-6">@Html.EditorFor(x => x.Manager_FirstName, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Value = Model.Manager_FirstName, Disabled = "true" } })</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.Manager_LastName):</div>
+            <div class="col-sm-6">@Html.EditorFor(x => x.Manager_LastName, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Value = Model.Manager_LastName, Disabled = "true" } })</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.Manager_Email):</div>
+            <div class="col-sm-6">@Html.EditorFor(x => x.Manager_Email, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Value = Model.Manager_Email, Disabled = "true" } })</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.Manager_Phone):</div>
+            <div class="col-sm-6">@Html.EditorFor(x => x.Manager_Phone, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Value = Model.Manager_Phone, Disabled = "true" } })</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        let $modal = $(window.Warehouses.selectors.Modal).data('modaljsobj');
+        $modal.assignSaveCallback(function () {
+            $.ajax({
+                url: "@Url.Action("DeleteWarehouse", "Resources", new { id = Model.Id })",
+                type: "delete",
+                success: function () {
+                    window.Warehouses.refreshTable();
+                },
+                error: function () {
+                    // maybe show the error?
+                    window.Warehouses.refreshTable();
+                }
+            });
+        });
+    });
+</script>

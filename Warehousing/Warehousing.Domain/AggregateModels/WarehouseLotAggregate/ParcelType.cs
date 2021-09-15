@@ -16,8 +16,12 @@ namespace Warehousing.Domain.AggregateModels.WarehouseLotAggregate
         public int? FreezerLifetime { get; private set; }
         public int? DryLifetime { get; private set; }
 
-        public virtual IReadOnlyCollection<Parcel> Parcels { get; set; }
+        private readonly List<Parcel> _parcels;
+        public virtual IReadOnlyCollection<Parcel> Parcels => _parcels;
 
-        public ParcelType() { }
+        public ParcelType()
+        {
+            _parcels = new List<Parcel>();
+        }
     }
 }

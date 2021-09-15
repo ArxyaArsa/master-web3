@@ -8,6 +8,8 @@ namespace Warehousing.Domain.AggregateModels.WarehouseLotAggregate
         WarehouseLot Add(WarehouseLot wl);
         void Update(WarehouseLot wl);
         void Remove(WarehouseLot wl);
-        Task<WarehouseLot> GetAsync(int wlId);
+        Task<WarehouseLot> GetAsync(int wlId, bool includeParcels = false);
+        Task<Parcel> GetParcelAsync(int pId, bool includeWarehouseLot = true, bool includeParcelType = true);
+        Task<ParcelType> GetParcelTypeAsync(int ptId);
     }
 }

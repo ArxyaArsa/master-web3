@@ -16,17 +16,24 @@ namespace Warehousing.Web.Controllers
     {
         #region Attributes and Ctors
         private WarehouseQueries _warehouseQueries;
+        private ParcelQueries _parcelQueries;
+        private ContractQueries _contractQueries;
+        private ParcelTypeQueries _parcelTypeQueries;
         private IWarehouseLotRepository _warehouseLotRepository;
         private readonly IMapper _mapper;
 
-        public ResourcesController(WarehouseQueries warehouseQueries, IWarehouseLotRepository warehouseLotRepository, IMapper mapper)
+        public ResourcesController(WarehouseQueries warehouseQueries, ParcelQueries parcelQueries, ContractQueries contractQueries, ParcelTypeQueries parcelTypeQueries, IWarehouseLotRepository warehouseLotRepository, IMapper mapper)
         {
             _warehouseQueries = warehouseQueries;
+            _parcelQueries = parcelQueries;
+            _contractQueries = contractQueries;
+            _parcelTypeQueries = parcelTypeQueries;
             _warehouseLotRepository = warehouseLotRepository;
             _mapper = mapper;
         }
         #endregion
 
+        #region Warehouses
         [HttpGet]
         public IActionResult Index()
         {
@@ -151,5 +158,163 @@ namespace Warehousing.Web.Controllers
                 return BadRequest("An Error occured! Cannot delete this Warehouse! --> " + e.Message + " - " + (e.InnerException?.Message));
             }
         }
+        #endregion
+
+        #region Warehouse Parcels
+        [HttpGet]
+        public async Task<IActionResult> WarehouseDetails(int id)
+        {
+            try
+            {
+                var wh = await _warehouseLotRepository.GetAsync(id, includeParcels: true);
+                var model = _mapper.Map<WarehouseLotDTO>(wh);
+
+                return View(model);
+            }
+            catch (Exception e)
+            {
+                // more error handling? dev mode?
+                return View("~/Views/Shared/Error.cshtml", new ErrorViewModel(e.Message + " - " + (e.InnerException?.Message)));
+            }
+        }
+
+        [HttpPost]
+        public IActionResult GetParcels([FromForm] DTParameterModel request, int warehouseId)
+        {
+            string error;
+            DTResponse res;
+
+            try
+            {
+                res = _parcelQueries.GetParcels(warehouseId, request);
+            }
+            catch (Exception e)
+            {
+                error = e.Message;
+
+                res = new DTResponse()
+                {
+                    Data = new List<WarehouseLotDTO>(),
+                    Draw = request.Draw,
+                    Error = error,
+                    RecordsTotal = 0,
+                    RecordsFiltered = 0,
+                    AdditionalParameters = new Dictionary<string, object>()
+                };
+            }
+
+            return Json(res);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> _AddEditParcelModalBody(int? id, int whId)
+        {
+            var model = new ParcelDTO();
+
+            if ((id ?? 0) != 0)
+            {
+                var p = await _warehouseLotRepository.GetParcelAsync(id.Value);
+                model = _mapper.Map<ParcelDTO>(p);
+            }
+
+            var wh = await _warehouseLotRepository.GetAsync(whId);
+            var whm = _mapper.Map<WarehouseLotDTO>(wh);
+            ViewBag.Warehouse = whm;
+            model.WarehouseLotId = whId;
+
+            ViewBag.Contracts = _contractQueries.GetContractsSimple().ToList();
+            ViewBag.ParcelTypes = _parcelTypeQueries.GetParcelTypesSimple().ToList();
+
+            return PartialView(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> _DeleteParcelModalBody(int? id, int whId)
+        {
+            if ((id ?? 0) != 0)
+            {
+                var p = await _warehouseLotRepository.GetParcelAsync(id.Value);
+                var model = _mapper.Map<ParcelDTO>(p);
+
+                var wh = await _warehouseLotRepository.GetAsync(whId);
+                var whm = _mapper.Map<WarehouseLotDTO>(wh);
+                ViewBag.Warehouse = whm;
+                model.WarehouseLotId = whId;
+
+                ViewBag.Contracts = _contractQueries.GetContractsSimple().ToList();
+                ViewBag.ParcelTypes = _parcelTypeQueries.GetParcelTypesSimple().ToList();
+
+                return PartialView(model);
+            }
+            else
+            {
+                // more error handling? dev mode?
+                return View("~/Views/Shared/Error.cshtml", new ErrorViewModel("No such warehouse! Please go back and try again!"));
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddParcel([Bind] ParcelDTO p)
+        {
+            try
+            {
+                var pt = await _warehouseLotRepository.GetParcelTypeAsync(p.ParcelTypeId);
+                var wh = await _warehouseLotRepository.GetAsync(p.WarehouseLotId, includeParcels: true);
+
+                wh.AddParcel(p.ContractId, pt, p.Weight);
+
+                _warehouseLotRepository.Update(wh);
+
+                return RedirectToAction("WarehouseDetails", new { id = p.WarehouseLotId });
+            }
+            catch (Exception e)
+            {
+                // more error handling? dev mode?
+                return View("~/Views/Shared/Error.cshtml", new ErrorViewModel(e.Message + " - " + (e.InnerException?.Message)));
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditParcel([Bind] ParcelDTO p)
+        {
+            try
+            {
+                var pt = await _warehouseLotRepository.GetParcelTypeAsync(p.ParcelTypeId);
+                var wh = await _warehouseLotRepository.GetAsync(p.WarehouseLotId, includeParcels: true);
+
+                wh.UpdateParcel(p.Id, p.ContractId, pt, p.Weight);
+
+                _warehouseLotRepository.Update(wh);
+
+                return RedirectToAction("WarehouseDetails", new { id = p.WarehouseLotId });
+            }
+            catch (Exception e)
+            {
+                // more error handling? dev mode?
+                return View("~/Views/Shared/Error.cshtml", new ErrorViewModel(e.Message + " - " + (e.InnerException?.Message)));
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteParcel(int id)
+        {
+            try
+            {
+                var p = await _warehouseLotRepository.GetParcelAsync(id);
+                var wh = await _warehouseLotRepository.GetAsync(p.WarehouseLotId, includeParcels: true);
+
+                wh.RemoveParcel(p);
+
+                _warehouseLotRepository.Update(wh);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                // more error handling? dev mode?
+                return BadRequest("An Error occured! Cannot delete this Parcel! --> " + e.Message + " - " + (e.InnerException?.Message));
+            }
+        }
+        #endregion
     }
 }

@@ -7,7 +7,12 @@ namespace Warehousing.Web.Application.Queries
     {
         public static void AddQueriesDependencies(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
-            serviceCollection.AddScoped(c => new WarehouseQueries(configuration.GetConnectionString("WarehousingConnection")));
+            var connString = configuration.GetConnectionString("WarehousingConnection");
+
+            serviceCollection.AddScoped(c => new WarehouseQueries(connString));
+            serviceCollection.AddScoped(c => new ParcelQueries(connString));
+            serviceCollection.AddScoped(c => new ContractQueries(connString));
+            serviceCollection.AddScoped(c => new ParcelTypeQueries(connString));
         }
     }
 }

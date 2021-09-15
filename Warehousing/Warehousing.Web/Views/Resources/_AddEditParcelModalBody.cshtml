@@ -1,0 +1,45 @@
+﻿@model Warehousing.Web.Models.DTOs.ParcelDTO
+
+@{ 
+    var rnd = new Random((int)(DateTime.Now.Ticks % int.MaxValue));
+    uint uid = (((uint)rnd.Next(0, 255)) << 24) + (((uint)rnd.Next(0, 255)) << 16) + (((uint)rnd.Next(0, 255)) << 8) + (uint)rnd.Next(0, 255);
+}
+
+<div class="row add-edit-parcel-form-container add-edit-parcel-form-container-@(uid) form-group">
+    <form class="add-edit-parcel-form" method="post" action="@Url.Action((Model.Id != 0 ? "EditParcel" : "AddParcel"), "Resources", new { })">
+        @*<div class="row">
+            <div class="col-sm-1">@Html.HiddenFor(x => x.Id, new { Id = (string)null, Value = Model.Id })</div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.Name):</div>
+            <div class="col-sm-7">@Html.EditorFor(x => x.Name, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Value = Model.Name } })</div>
+        </div>*@
+        @Html.HiddenFor(x => x.WarehouseLotId, new { Id = (string)null })
+        <div class="row">
+            <div class="col-sm-1">@Html.HiddenFor(x => x.Id, new { Id = (string)null, Value = Model.Id })</div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.ContractId):</div>
+            <div class="col-sm-7">
+                @Html.DropDownListFor(x => x.ContractId, ((IEnumerable<Warehousing.Web.Models.DTOs.ContractDTO>)ViewBag.Contracts).Select(y => new SelectListItem(y.Description, y.Id.ToString())).ToList(), null, new { Class = "form-control", Id = (string)null, Value = Model.ContractId })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.ParcelTypeId):</div>
+            <div class="col-sm-7">
+                @Html.DropDownListFor(x => x.ParcelTypeId, ((IEnumerable<Warehousing.Web.Models.DTOs.ParcelTypeDTO>)ViewBag.ParcelTypes).Select(y => new SelectListItem(y.Name + $" ({(int)y.MinWeightOccupied} to {(int)y.MaxWeight} kg)", y.Id.ToString())).ToList(), null, new { Class = "form-control", Id = (string)null, Value = Model.ParcelTypeId })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.Weight) (kg):</div>
+            <div class="col-sm-7">@Html.EditorFor(x => x.Weight, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Type = "number", Min = 0, Max = 100000, Step = 1, Value = Model.Weight } })</div>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        let $modal = $(window.Parcels.selectors.Modal).data('modaljsobj');
+        $modal.assignSaveCallback(function () {
+            $('.add-edit-parcel-form-container-@(uid) form.add-edit-parcel-form').submit();
+        });
+    });
+</script>

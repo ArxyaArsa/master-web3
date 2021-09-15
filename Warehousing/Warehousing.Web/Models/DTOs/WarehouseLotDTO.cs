@@ -13,9 +13,11 @@ namespace Warehousing.Web.Models.DTOs
         public string Name { get;  set; }
         public string Description { get;  set; }
         public string Type { get;  set; }
+
+        [DisplayName("Occupated Status")]
         public string Occupated { get;  set; }
 
-        [DisplayName("Weight Capacity")]
+        [DisplayName("Weight Capacity (kg)")]
         public decimal WeightCapacity { get;  set; }
         public DateTime? LastInventoryChange { get;  set; }
         
@@ -31,7 +33,10 @@ namespace Warehousing.Web.Models.DTOs
         [DisplayName("Email")]
         public string Manager_Email { get;  set; }
 
+        [DisplayName("Parcel Count")]
         public int ParcelCount { get; set; }
+
+        [DisplayName("Parcel Total Weight (kg)")]
         public decimal ParcelWeight { get; set; }
     }
 }

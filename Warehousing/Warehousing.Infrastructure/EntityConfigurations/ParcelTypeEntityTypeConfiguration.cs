@@ -27,6 +27,9 @@ namespace Warehousing.Infrastructure.EntityConfigurations
             builder.Property(x => x.DryLifetime);
 
             builder.HasKey(x => x.Id);
+
+            var navigation = builder.Metadata.FindNavigation(nameof(ParcelType.Parcels));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }

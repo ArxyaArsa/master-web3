@@ -8,16 +8,16 @@ using Warehousing.Web.Models.DTOs;
 
 namespace Warehousing.Web.Application.Queries
 {
-    public class WarehouseQueries
+    public class ParcelQueries
     {
         private string _connectionString;
 
-        public WarehouseQueries(string connString)
+        public ParcelQueries(string connString)
         {
             _connectionString = connString;
         }
 
-        public DTResponse GetWarehouses(DTParameterModel dtrequest)
+        public DTResponse GetParcels(int whId, DTParameterModel dtrequest)
         {
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -25,42 +25,31 @@ namespace Warehousing.Web.Application.Queries
 
                 var baseQuery = $@"
 SELECT    
-    WL.[Id],
-    WL.[Name],
-    WL.[Description],
-    WL.[Type],
-    WL.[Occupated],
-    WL.[WeightCapacity],
-    WL.[LastInventoryChange],
-    WL.[Manager_FirstName],
-    WL.[Manager_LastName],
-    WL.[Manager_Phone],
-    WL.[Manager_Email],
-    COUNT(P.Id) AS ParcelCount,
-    SUM(ISNULL(P.Weight, 0)) AS ParcelWeight
-FROM [WarehouseLot] WL
-LEFT JOIN [Parcel] P ON WL.Id = P.WarehouseLotId AND P.[IsRemoved] != 1
-GROUP BY 
-    WL.[Id],
-    WL.[Name],
-    WL.[Description],
-    WL.[Type],
-    WL.[Occupated],
-    WL.[WeightCapacity],
-    WL.[LastInventoryChange],
-    WL.[Manager_FirstName],
-    WL.[Manager_LastName],
-    WL.[Manager_Phone],
-    WL.[Manager_Email]
+    P.[Id],
+    CONCAT('P', P.[Id]) AS [Name],
+    P.[ContractId],
+    C.[Description] AS [ContractName],
+    P.[ParcelTypeId],
+    PT.[Name] AS [ParcelTypeName],
+    P.[WarehouseLotId],
+    P.[Weight],
+    P.[AddDate],
+    P.[ValidUntil],
+    P.[IsRemoved],
+    P.[RemovedDate]
+FROM [Parcel] P
+LEFT JOIN [ParcelType] PT ON P.[ParcelTypeId] = PT.[Id]
+LEFT JOIN [Contract] C ON P.[ContractId] = C.[Id]
+WHERE WarehouseLotId = {whId} AND [IsRemoved] != 1
 ";
 
                 var searchColumns = new List<string>()
                 {
-                    "Name", "Description", "Manager_FirstName", "Manager_LastName"
+                    "Name", "ContractName", "ParcelTypeName"
                 };
 
                 var query = DTHelper.ProcessRequestSQL(baseQuery, dtrequest, searchColumns, false);
-                var res = conn.Query<WarehouseLotDTO>(query);
+                var res = conn.Query<ParcelDTO>(query);
 
                 query = DTHelper.ProcessRequestSQL(baseQuery, dtrequest, searchColumns, true, false);
                 var countFiltered = conn.QuerySingle<int>(query);

@@ -1,0 +1,49 @@
+﻿@model Warehousing.Web.Models.DTOs.ParcelDTO
+
+@{ 
+    var rnd = new Random((int)(DateTime.Now.Ticks % int.MaxValue));
+    uint uid = (((uint)rnd.Next(0, 255)) << 24) + (((uint)rnd.Next(0, 255)) << 16) + (((uint)rnd.Next(0, 255)) << 8) + (uint)rnd.Next(0, 255);
+}
+
+<div class="row delete-parcel-form-container delete-parcel-form-container-@(uid) form-group">
+    <div class="row"><div class="col-md-1"></div><div class="col-md-11"><p>Are you sure you want to delete this Parcel?</p><br /></div></div>
+    @Html.HiddenFor(x => x.WarehouseLotId, new { Id = (string)null })
+    <div class="row">
+        <div class="col-sm-1">@Html.HiddenFor(x => x.Id, new { Id = (string)null, Value = Model.Id })</div>
+        <div class="col-sm-3">@Html.DisplayNameFor(x => x.ContractId):</div>
+        <div class="col-sm-7">
+            @Html.DropDownListFor(x => x.ContractId, ((IEnumerable<Warehousing.Web.Models.DTOs.ContractDTO>)ViewBag.Contracts).Select(y => new SelectListItem(y.Description, y.Id.ToString())).ToList(), null, new { Class = "form-control", Id = (string)null, Disabled = true })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-3">@Html.DisplayNameFor(x => x.ParcelTypeId):</div>
+        <div class="col-sm-7">
+            @Html.DropDownListFor(x => x.ParcelTypeId, ((IEnumerable<Warehousing.Web.Models.DTOs.ParcelTypeDTO>)ViewBag.ParcelTypes).Select(y => new SelectListItem(y.Name + $" ({(int)y.MinWeightOccupied} to {(int)y.MaxWeight} kg)", y.Id.ToString())).ToList(), null, new { Class = "form-control", Id = (string)null, Disabled = true })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-3">@Html.DisplayNameFor(x => x.Weight) (kg):</div>
+        <div class="col-sm-7">@Html.EditorFor(x => x.Weight, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Type = "number", Min = 0, Max = 100000, Step = 1, Disabled = true } })</div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        let $modal = $(window.Parcels.selectors.Modal).data('modaljsobj');
+        $modal.assignSaveCallback(function () {
+            $.ajax({
+                url: "@Url.Action("DeleteParcel", "Resources", new { id = Model.Id })",
+                type: "delete",
+                success: function () {
+                    window.Parcels.refreshTable();
+                },
+                error: function () {
+                    // maybe show the error?
+                    window.Parcels.refreshTable();
+                }
+            });
+        });
+    });
+</script>

@@ -34,6 +34,9 @@ namespace Warehousing.Infrastructure.EntityConfigurations
             });
 
             builder.HasKey(x => x.Id);
+
+            var navigation = builder.Metadata.FindNavigation(nameof(WarehouseLot.Parcels));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Warehousing.Domain.AggregateModels.WarehouseLotAggregate;
 using Warehousing.Web.Models.DTOs;
 
@@ -12,7 +9,9 @@ namespace Warehousing.Web.Application.AutoMapperProfiles
     {
         public WarehouseLotProfile()
         {
-            CreateMap<WarehouseLot, WarehouseLotDTO>();
+            CreateMap<WarehouseLot, WarehouseLotDTO>()
+                .ForMember(d => d.ParcelCount, a => a.MapFrom(s => s.GetValidParcels().Count))
+                .ForMember(d => d.ParcelWeight, a => a.MapFrom(s => s.GetValidParcels().Sum(x => x.Weight ?? 0)));
         }
     }
 }

@@ -17,13 +17,7 @@ namespace Warehousing.Web.Application.Queries
             _connectionString = connString;
         }
 
-        public IEnumerable<ParcelTypeDTO> GetParcelTypesSimple()
-        {
-            using (var conn = new SqlConnection(_connectionString))
-            {
-                conn.Open();
-
-                var baseQuery = $@"
+        public const string BASE_QUERY = @"
 SELECT    
     PT.[Id],
     PT.[Name],
@@ -47,12 +41,55 @@ GROUP BY
     PT.[DryLifetime]
 ";
 
+        public IEnumerable<ParcelTypeDTO> GetParcelTypesSimple()
+        {
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+
+                var baseQuery = BASE_QUERY;
                 
                 var res = conn.Query<ParcelTypeDTO>(baseQuery);
 
                 conn.Close();
 
                 return res;
+            }
+        }
+
+        public DTResponse GetParcelTypes(DTParameterModel dtrequest)
+        {
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+
+                var baseQuery = BASE_QUERY;
+
+                var searchColumns = new List<string>()
+                {
+                    "Name", "Description"
+                };
+
+                var query = DTHelper.ProcessRequestSQL(baseQuery, dtrequest, searchColumns, false);
+                var res = conn.Query<ParcelTypeDTO>(query);
+
+                query = DTHelper.ProcessRequestSQL(baseQuery, dtrequest, searchColumns, true, false);
+                var countFiltered = conn.QuerySingle<int>(query);
+
+                query = DTHelper.ProcessRequestSQL(baseQuery, dtrequest, searchColumns, true, true);
+                var countAll = conn.QuerySingle<int>(query);
+
+                conn.Close();
+
+                return new DTResponse()
+                {
+                    Data = res,
+                    Draw = dtrequest.Draw,
+                    Error = null,
+                    RecordsTotal = countAll,
+                    RecordsFiltered = countFiltered,
+                    AdditionalParameters = new Dictionary<string, object>()
+                };
             }
         }
     }

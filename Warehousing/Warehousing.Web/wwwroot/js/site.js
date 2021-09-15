@@ -9,16 +9,19 @@ window.App = window.App || (function () {
 
         var datestring =
             dtObj.getFullYear()
-            + "-" + ((dtObj.getMonth() + 1) | "00")
-            + "-" + (dtObj.getDate() | "00")
+            + "-" + zeroPad((dtObj.getMonth() + 1), 2)
+            + "-" + zeroPad(dtObj.getDate(), 2)
             + " "
-            + (dtObj.getHours() | "00")
-            + ":" + (dtObj.getMinutes() | "00");
+            + zeroPad(dtObj.getHours(), 2)
+            + ":" + zeroPad(dtObj.getMinutes(), 2);
 
         return datestring;
     }
 
+    const zeroPad = (num, places) => String(num).padStart(places, '0');
+
     return {
-        formatDateTime: formatDateTime
+        formatDateTime: formatDateTime,
+        zeroPad: zeroPad
     }
 })();

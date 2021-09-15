@@ -1,0 +1,74 @@
+﻿@model Warehousing.Web.Models.DTOs.ParcelTypeDTO
+
+@{
+    var rnd = new Random((int)(DateTime.Now.Ticks % int.MaxValue));
+    uint uid = (((uint)rnd.Next(0, 255)) << 24) + (((uint)rnd.Next(0, 255)) << 16) + (((uint)rnd.Next(0, 255)) << 8) + (uint)rnd.Next(0, 255);
+}
+
+<div class="row add-edit-pt-form-container add-edit-pt-form-container-@(uid) form-group">
+    <form class="add-edit-pt-form" method="post" action="@Url.Action((Model.Id != 0 ? "EditParcelType" : "AddParcelType"), "Playbook", new { })">
+        <div class="row">
+            <div class="col-sm-1">@Html.HiddenFor(x => x.Id, new { Id = (string)null, Value = Model.Id })</div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.Name):</div>
+            <div class="col-sm-7">@Html.EditorFor(x => x.Name, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.Description):</div>
+            <div class="col-sm-7">@Html.TextAreaFor(x => x.Description, new { Class = "form-control", Id = (string)null, Rows = 2 })</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.MinWeightOccupied):</div>
+            <div class="col-sm-7">@Html.EditorFor(x => x.MinWeightOccupied, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Type = "number", Min = 0, Max = 100000, Step = 1 } })</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.MaxWeight):</div>
+            <div class="col-sm-7">@Html.EditorFor(x => x.MaxWeight, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Type = "number", Min = 0, Max = 100000, Step = 1 } })</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.IsPerishable):</div>
+            <div class="col-sm-1">@Html.CheckBoxFor(x => x.IsPerishable, new { Class = "form-control", Id = (string)null })</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.FreezerLifetime):</div>
+            <div class="col-sm-7">@Html.EditorFor(x => x.FreezerLifetime, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Type = "number", Min = 1, Max = 100000, Step = 1 } })</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.DryLifetime):</div>
+            <div class="col-sm-7">@Html.EditorFor(x => x.DryLifetime, new { htmlAttributes = new { Class = "form-control", Id = (string)null, Type = "number", Min = 1, Max = 100000, Step = 1 } })</div>
+        </div>
+        @if (Model.Id != 0)
+        {
+        <div class="clearfix" style="height: 20px"></div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10"><p><i>Notice: Parcel Types which have 1 or more Parcel Count cannot be changed except for the Name and Description.</i></p></div>
+        </div>
+        }
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        let $modal = $(window.ParcelTypes.selectors.Modal).data('modaljsobj');
+        $modal.assignSaveCallback(function () {
+            $('.add-edit-pt-form-container-@(uid) form.add-edit-pt-form').submit();
+        });
+
+        function disableInputs@(uid) () {
+            let disable = $('.add-edit-pt-form-container-@(uid) form.add-edit-pt-form input[name=IsPerishable]').prop("checked") != true;
+
+            $('.add-edit-pt-form-container-@(uid) form.add-edit-pt-form input[name=FreezerLifetime]').attr("disabled", disable);
+            $('.add-edit-pt-form-container-@(uid) form.add-edit-pt-form input[name=DryLifetime]').attr("disabled", disable);
+        }
+
+        $('.add-edit-pt-form-container-@(uid) form.add-edit-pt-form input[name=IsPerishable]').on("change", disableInputs@(uid));
+
+        disableInputs@(uid)();
+    });
+</script>

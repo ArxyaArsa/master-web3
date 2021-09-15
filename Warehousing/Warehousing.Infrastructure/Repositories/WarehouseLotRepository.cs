@@ -27,6 +27,16 @@ namespace Warehousing.Infrastructure.Repositories
             return ret.Entity;
         }
 
+        public ParcelType AddParcelType(string name, string desc, decimal minWeightOccupied, decimal maxWeight, bool isPerishable, int? freezerLifetime, int? dryLifetime)
+        {
+            var pt = new ParcelType(name, desc, minWeightOccupied, maxWeight, isPerishable, freezerLifetime, dryLifetime);
+
+            var ret = _context.ParcelTypes.Add(pt);
+            _context.SaveChanges();
+
+            return ret.Entity;
+        }
+
         public Task<WarehouseLot> GetAsync(int pId, bool includeParcels = false)
         {
             var q = _dbSet.AsQueryable();
@@ -50,9 +60,14 @@ namespace Warehousing.Infrastructure.Repositories
             return q.FirstOrDefaultAsync(x => x.Id == pId);
         }
 
-        public Task<ParcelType> GetParcelTypeAsync(int ptId)
+        public Task<ParcelType> GetParcelTypeAsync(int ptId, bool includeParcels = true)
         {
-            return _context.ParcelTypes.FirstOrDefaultAsync(x => x.Id == ptId);
+            var q = _context.ParcelTypes.AsQueryable();
+
+            if (includeParcels)
+                q = q.Include(x => x.Parcels);
+
+            return q.FirstOrDefaultAsync(x => x.Id == ptId);
         }
 
         public void Remove(WarehouseLot wl)
@@ -62,6 +77,11 @@ namespace Warehousing.Infrastructure.Repositories
         }
 
         public void Update(WarehouseLot p)
+        {
+            _context.SaveChanges(); // all actual changes will be done through the Domain entity methods
+        }
+
+        public void Update(ParcelType pt)
         {
             _context.SaveChanges(); // all actual changes will be done through the Domain entity methods
         }

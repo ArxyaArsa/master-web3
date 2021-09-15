@@ -24,17 +24,14 @@ namespace Warehousing.Domain.AggregateModels.SupplierAggregate
         private readonly List<Contract> _contracts;
         public IReadOnlyCollection<Contract> Contracts => _contracts;
 
-        public Supplier() { }
+        public Supplier()
+        {
+            _contracts = new List<Contract>();
+        }
 
         public Supplier(string name, string description, SupplierContact contact, SupplierAddress address) : this()
         {
-            Name = name;
-            Description = description;
-            Contact = contact;
-            Address = address;
-
-            _contracts = new List<Contract>();
-            AddDate = DateTime.UtcNow;
+            Update(name, description, contact, address);
         }
 
         public void AddContract(string contractDesc, DateTime startDate, DateTime paymentDueUntil, bool isPayed = false)
@@ -49,6 +46,16 @@ namespace Warehousing.Domain.AggregateModels.SupplierAggregate
             LastContractDate = utcNow;
 
             _contracts.Add(contract);
+        }
+
+        public void Update(string name, string description, SupplierContact contact, SupplierAddress address)
+        {
+            Name = name ?? throw new ArgumentNullException("Supplier Name cannot be empty");
+            Description = description;
+            Contact = contact;
+            Address = address;
+
+            AddDate = DateTime.UtcNow;
         }
     }
 }

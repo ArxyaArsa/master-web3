@@ -1,0 +1,303 @@
+﻿@{
+}
+
+<h1>Suppliers</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="row suppliers-table-container">
+            <table class="suppliers-table">
+                <thead>
+                    <tr>
+                        <th colspan="2"></th>
+                        <th colspan="3">Contact</th>
+                        <th colspan="3">Address</th>
+                        <th colspan="4"></th>
+                    </tr>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+
+                        <th>First & Last Name</th>
+                        <th>Phone & Email</th>
+                        <th>Fax</th>
+
+                        <th>State</th>
+                        <th>Country</th>
+                        <th>Address</th>
+
+                        <th>Date Added</th>
+                        <th>First Contract Date</th>
+                        <th>Last Contract Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <div class="clearfix"></div>
+            <div class="overlay table-overlay" style="display: none"><i class="fa fa-refresh fa-spin"></i></div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+
+@{
+    string modalClass = "suppliers-modal";
+    await Html.RenderPartialAsync("~/Views/Shared/_Modal.cshtml", new ModalViewModel()
+    {
+        UniqueClass = modalClass
+    });
+}
+
+@section styles {
+<style>
+    .suppliers-table-container .overlay.table-overlay {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgb(244,244,244,0.7);
+    }
+
+    .suppliers-table-container {
+        position: relative;
+    }
+
+    .suppliers-table-container .dataTables_processing {
+        display: none !important;
+    }
+
+    .suppliers-table-container .overlay.table-overlay .fa-refresh {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        font-size: 50px;
+        z-index: 100;
+        margin-left: -25px;
+        margin-top: -25px;
+    }
+</style>
+}
+
+@section scripts {
+    <script>
+    window.Suppliers = window.Suppliers || (function () {
+        var _selectors = {
+            Table: ".suppliers-table-container .suppliers-table",
+            Overlay: ".suppliers-table-container .overlay.table-overlay",
+            AddButton: ".suppliers-table-container .btn-add-suppliers",
+            Modal: ".@(modalClass)",
+            _EditButton: ".btn-edit-suppliers",
+            _DeleteButton: ".btn-delete-suppliers"
+        }
+
+        var _table = null;
+
+
+        function init() {
+            fillDataTable();
+            initEvents();
+        }
+
+        function initEvents() {
+
+            $(_selectors.AddButton).on('click', function () {
+                $(_selectors.Modal).data("modaljsobj").show({
+                    title: "Add a Supplier",
+                    closeOnSave: true,
+                    bodyUrl: "@Url.Action("_AddEditSupplierModalBody", "Playbook", new { })"
+                });
+            });
+
+            $(_selectors.Table).on('click', _selectors._EditButton, function () {
+                $(_selectors.Modal).data("modaljsobj").show({
+                    title: "Edit Supplier",
+                    closeOnSave: true,
+                    bodyUrl: "@Url.Action("_AddEditSupplierModalBody", "Playbook", new { })/" + $(this).data("suppliers-id")
+                });
+            });
+        }
+
+        function fillDataTable() {
+
+            if (_table == null) {
+                _table = $(_selectors.Table).on('preXhr.dt', function (e, settings, data) {
+                    // callback before ajax call
+                    $(_selectors.AddButton).prop("disabled", true);
+                    $(_selectors.Overlay).show();
+                }).on('xhr.dt', function (e, settings, json, xhr) {
+                    // callback after ajax call
+
+                    if ($(_selectors.AddButton).text() == "") {
+                        $(_selectors.AddButton).text("Add a Supplier");
+                        $(_selectors.AddButton).addClass("btn");
+                        $(_selectors.AddButton).addClass("btn-primary");
+                    }
+
+                    $(_selectors.AddButton).prop("disabled", false);
+                    $(_selectors.Overlay).hide();
+
+                    return xhr.responseJSON;
+                }).DataTable({
+                    lengthChange: true,
+                    autoWidth: false,
+                    processing: true,
+                    serverSide: true,
+                    searching: true,
+                    ordering: true,
+                    paging: true,
+                    info: true,
+                    order: [[0, "desc"]],
+                    pageLength: 10,
+                    searchDelay: 2000,
+                    lengthMenu: [5, 10, 25, 50, 100, 250, 500],
+                    dom: '<"row"<"col-sm-4"<"pull-left"<"btn-add-suppliers">>><"col-sm-4"><"col-sm-4"<"pull-right"f>>>rt<"row"<"col-sm-6"i><"col-sm-6"p>><"row"<"col-sm-12"l>>',
+                    ajax: {
+                        url: "@Url.Action("GetSuppliers", "Playbook")",
+                        data: function (d) {
+                            //d.drillInfo = _drillInfo
+
+                            return d;
+                        },
+                        type: "POST"
+                    },
+                    language: {
+                        processing: ''
+                    },
+                    columns: [
+                        {
+                            data: "name",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                return `<span class='datacell'>${full.name}</span>`;
+                            }
+                        },
+                        {
+                            data: "description",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+
+                                var desc = full.description || "";
+
+                                if (((full.description || "").length || 0) > 40) {
+                                    desc = full.description.substring(0, 40);
+                                }
+
+                                return `<span class='datacell' title='${(full.description || "/")}'>${desc}</span>`;
+                            }
+                        },
+                        {
+                            data: "contact_FirstName",
+                            orderable: false,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                return `<span class='datacell'>${(full.contact_FirstName || "/")} ${(full.contact_LastName || "/")}</span>`;
+                            }
+                        },
+                        {
+                            data: "contact_Phone",
+                            orderable: false,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                return `<span class='datacell'>${(full.contact_Phone || "/")} ${(full.contact_Email || "/")}</span>`;
+                            }
+                        },
+                        {
+                            data: "contact_Fax",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                return `<span class='datacell'>${(full.contact_Fax || "/")}</span>`;
+                            }
+                        },
+                        {
+                            data: "address_State",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                return `<span class='datacell'>${(full.address_State || "/")}</span>`;
+                            }
+                        },
+                        {
+                            data: "address_Country",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                return `<span class='datacell'>${(full.address_Country || "/")}</span>`;
+                            }
+                        },
+                        {
+                            data: "address_PostalCode",
+                            orderable: false,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                return `<span class='datacell'>${(full.address_PostalCode || "/")}<br/>${(full.address_AddressLine1 || "/")}<br/>${(full.address_AddressLine2 || "/")}</span>`;
+                            }
+                        },
+                        {
+                            data: "addDate",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                var dString = full.addDate != null ? App.formatDateTime(full.addDate) : "/";
+
+                                return `<span class='datacell'>${dString}</span>`;
+                            }
+                        },
+                        {
+                            data: "firstContractDate",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                var dString = full.firstContractDate != null ? App.formatDateTime(full.firstContractDate) : "/";
+
+                                return `<span class='datacell'>${dString}</span>`;
+                            }
+                        },
+                        {
+                            data: "lastContractDate",
+                            orderable: true,
+                            className: "text-left",
+                            render: function (data, type, full, meta) {
+                                var dString = full.lastContractDate != null ? App.formatDateTime(full.lastContractDate) : "/";
+
+                                return `<span class='datacell'>${dString}</span>`;
+                            }
+                        },
+                        {
+                            data: "id",
+                            orderable: false,
+                            className: "text-left",
+                            width: "100px",
+                            render: function (data, type, full, meta) {
+                                // action buttons
+                                return `
+<button class="btn btn-primary pull-left btn-edit-suppliers" data-suppliers-id="${full.id}">Edit <span class="fa fa-edit"></span></button>
+<!--button class="btn btn-primary pull-left btn-delete-suppliers" data-suppliers-id="${full.id}">Delete <span class="fa fa-remove"></span></button-->
+`;
+                            }
+                        }
+                    ]
+                });
+            }
+            else {
+                _table.draw();
+            }
+        }
+
+        return {
+            init: init,
+            selectors: _selectors,
+            refreshTable: fillDataTable
+        }
+    })();
+
+    $(document).ready(function () {
+        Suppliers.init();
+    });
+    </script>
+}

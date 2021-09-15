@@ -13,6 +13,7 @@ namespace Warehousing.Web.Application.Queries
             serviceCollection.AddScoped(c => new ParcelQueries(connString));
             serviceCollection.AddScoped(c => new ContractQueries(connString));
             serviceCollection.AddScoped(c => new ParcelTypeQueries(connString));
+            serviceCollection.AddScoped(c => new SupplierQueries(connString));
         }
     }
 }

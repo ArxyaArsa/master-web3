@@ -10,7 +10,8 @@ namespace Warehousing.Web.Application.AutoMapperProfiles
             var mappingConfig = new MapperConfiguration(mc => {
                 mc.AddProfile(new WarehouseLotProfile());
                 mc.AddProfile(new ParcelProfile());
-                mc.AddProfile(new ParcelTypeProfile());
+                mc.AddProfile(new ParcelTypeProfile()); 
+                mc.AddProfile(new SupplierProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             serviceCollection.AddSingleton(mapper);

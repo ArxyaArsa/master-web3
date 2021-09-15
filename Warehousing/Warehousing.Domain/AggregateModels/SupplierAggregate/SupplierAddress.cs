@@ -17,11 +17,10 @@ namespace Warehousing.Domain.AggregateModels.SupplierAggregate
 
         public SupplierAddress(string state, string country, string postalcode, string addressline1, string addressline2) : this()
         {
-            // domain side validation
-            State = state ?? throw new ArgumentNullException(nameof(State));
-            Country = country ?? throw new ArgumentNullException(nameof(Country));
-            PostalCode = postalcode ?? throw new ArgumentNullException(nameof(PostalCode));
-            AddressLine1 = addressline1 ?? throw new ArgumentNullException(nameof(AddressLine1));
+            State = state;
+            Country = country;
+            PostalCode = postalcode;
+            AddressLine1 = addressline1;
             AddressLine2 = addressline2;
         }
 

@@ -1,0 +1,92 @@
+﻿@model Warehousing.Web.Models.DTOs.SupplierDTO
+
+@{ 
+    var rnd = new Random((int)(DateTime.Now.Ticks % int.MaxValue));
+    uint uid = (((uint)rnd.Next(0, 255)) << 24) + (((uint)rnd.Next(0, 255)) << 16) + (((uint)rnd.Next(0, 255)) << 8) + (uint)rnd.Next(0, 255);
+}
+
+<div class="row add-edit-supplier-form-container add-edit-supplier-form-container-@(uid) form-group">
+    <form class="add-edit-supplier-form" method="post" action="@Url.Action((Model.Id != 0 ? "EditSupplier" : "AddSupplier"), "Playbook", new { })">
+        <div class="row">
+            <div class="col-sm-1">@Html.HiddenFor(x => x.Id, new { Id = (string)null, Value = Model.Id })</div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.Name):</div>
+            <div class="col-sm-7">@Html.EditorFor(x => x.Name, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.Description):</div>
+            <div class="col-sm-7">@Html.TextAreaFor(x => x.Description, new { Class = "form-control", Id = (string)null, Rows = 2 })</div>
+        </div>
+        <div class="row" style="margin-top: 10px">
+            <div class="row">
+                <div class="col-sm-7"></div>
+                <div class="col-sm-4"><lavel class="pull-right"><i>Contact Info</i></lavel></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-3">@Html.DisplayNameFor(x => x.Contact_FirstName):</div>
+                <div class="col-sm-6">@Html.EditorFor(x => x.Contact_FirstName, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-3">@Html.DisplayNameFor(x => x.Contact_LastName):</div>
+                <div class="col-sm-6">@Html.EditorFor(x => x.Contact_LastName, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-3">@Html.DisplayNameFor(x => x.Contact_Phone):</div>
+                <div class="col-sm-6">@Html.EditorFor(x => x.Contact_Phone, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-3">@Html.DisplayNameFor(x => x.Contact_Email):</div>
+                <div class="col-sm-6">@Html.EditorFor(x => x.Contact_Email, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-3">@Html.DisplayNameFor(x => x.Contact_Fax):</div>
+                <div class="col-sm-6">@Html.EditorFor(x => x.Contact_Fax, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 10px">
+            <div class="row">
+                <div class="col-sm-7"></div>
+                <div class="col-sm-4"><lavel class="pull-right"><i>Address Info</i></lavel></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-3">@Html.DisplayNameFor(x => x.Address_State):</div>
+                <div class="col-sm-6">@Html.EditorFor(x => x.Address_State, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-3">@Html.DisplayNameFor(x => x.Address_Country):</div>
+                <div class="col-sm-6">@Html.EditorFor(x => x.Address_Country, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-3">@Html.DisplayNameFor(x => x.Address_PostalCode):</div>
+                <div class="col-sm-6">@Html.EditorFor(x => x.Address_PostalCode, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-3">@Html.DisplayNameFor(x => x.Address_AddressLine1):</div>
+                <div class="col-sm-6">@Html.EditorFor(x => x.Address_AddressLine1, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-3">@Html.DisplayNameFor(x => x.Address_AddressLine2):</div>
+                <div class="col-sm-6">@Html.EditorFor(x => x.Address_AddressLine2, new { htmlAttributes = new { Class = "form-control", Id = (string)null } })</div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        let $modal = $(window.Suppliers.selectors.Modal).data('modaljsobj');
+        $modal.assignSaveCallback(function () {
+            $('.add-edit-supplier-form-container-@(uid) form.add-edit-supplier-form').submit();
+        });
+    });
+</script>

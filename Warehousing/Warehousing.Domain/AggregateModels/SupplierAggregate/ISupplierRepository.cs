@@ -7,6 +7,7 @@ namespace Warehousing.Domain.AggregateModels.SupplierAggregate
     {
         Supplier Add(Supplier s);
         void Update(Supplier s);
-        Task<Supplier> GetAsync(int sId);
+        Task<Supplier> GetAsync(int sId, bool includeContracts = true);
+        Task<Contract> GetContractAsync(int cId, bool includeSupplier = true);
     }
 }

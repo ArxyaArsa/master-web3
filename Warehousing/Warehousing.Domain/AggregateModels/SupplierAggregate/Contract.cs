@@ -28,15 +28,20 @@ namespace Warehousing.Domain.AggregateModels.SupplierAggregate
 
         public Contract(Supplier s, string desc, DateTime startDate, DateTime paymentDueUntil, bool isPayed = false) : this()
         {
-            Description = desc;
-            StartDate = startDate;
-            PaymentDueUntil = paymentDueUntil;
-            IsPayed = isPayed;
+            Update(desc, startDate, paymentDueUntil, isPayed);
 
             SupplierId = s.Id;
             Supplier = s;
 
             AddDate = DateTime.UtcNow;
+        }
+
+        public void Update(string desc, DateTime startDate, DateTime paymentDueUntil, bool isPayed = false)
+        {
+            Description = desc ?? throw new ArgumentNullException("Contract Description cannot be empty!");
+            StartDate = startDate;
+            PaymentDueUntil = paymentDueUntil;
+            IsPayed = isPayed;
         }
     }
 }

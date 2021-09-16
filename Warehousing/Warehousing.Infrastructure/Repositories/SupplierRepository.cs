@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Warehousing.Domain.AggregateModels.SupplierAggregate;
@@ -26,9 +27,24 @@ namespace Warehousing.Infrastructure.Repositories
             return ret.Entity;
         }
 
-        public Task<Supplier> GetAsync(int pId)
+        public Task<Supplier> GetAsync(int sId, bool includeContracts = true)
         {
-            return _dbSet.FindAsync(pId);
+            var q = _dbSet.AsQueryable();
+
+            if (includeContracts)
+                q = q.Include(x => x.Contracts);
+
+            return q.FirstOrDefaultAsync(x => x.Id == sId);
+        }
+
+        public Task<Contract> GetContractAsync(int cId, bool includeSupplier = true)
+        {
+            var q = _context.Contracts.AsQueryable();
+
+            if (includeSupplier)
+                q = q.Include(x => x.Supplier);
+
+            return q.FirstOrDefaultAsync(x => x.Id == cId);
         }
 
         public void Update(Supplier p)

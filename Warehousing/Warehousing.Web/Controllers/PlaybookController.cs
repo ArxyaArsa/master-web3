@@ -211,7 +211,94 @@ namespace Warehousing.Web.Controllers
         #endregion
 
         #region Contracts
+        public IActionResult Contracts()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult GetContracts([FromForm] DTParameterModel request)
+        {
+            string error;
+            DTResponse res;
+
+            try
+            {
+                res = _contractQueries.GetContracts(request);
+            }
+            catch (Exception e)
+            {
+                error = e.Message;
+
+                res = new DTResponse()
+                {
+                    Data = new List<ContractDTO>(),
+                    Draw = request.Draw,
+                    Error = error,
+                    RecordsTotal = 0,
+                    RecordsFiltered = 0,
+                    AdditionalParameters = new Dictionary<string, object>()
+                };
+            }
+
+            return Json(res);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> _AddEditContractModalBody(int? id)
+        {
+            var model = new ContractDTO();
+
+            if ((id ?? 0) != 0)
+            {
+                var c = await _supplierRepository.GetContractAsync(id.Value);
+                model = _mapper.Map<ContractDTO>(c);
+            }
+
+            ViewBag.Suppliers = _supplierQueries.GetSuppliersSimple();
+
+            return PartialView(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddContract([Bind] ContractDTO c)
+        {
+            try
+            {
+                var s = await _supplierRepository.GetAsync(c.SupplierId);
+
+                s.AddContract(c.Description, c.StartDate, c.PaymentDueUntil, c.IsPayed);
+
+                _supplierRepository.Update(s);
+
+                return RedirectToAction("Contracts");
+            }
+            catch (Exception e)
+            {
+                // more error handling? dev mode?
+                return View("~/Views/Shared/Error.cshtml", new ErrorViewModel(e.Message + " - " + (e.InnerException?.Message)));
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditContract([Bind] ContractDTO c)
+        {
+            try
+            {
+                var s = await _supplierRepository.GetAsync(c.SupplierId);
+
+                s.UpdateContract(c.Id, c.Description, c.StartDate, c.PaymentDueUntil, c.IsPayed);
+
+                _supplierRepository.Update(s);
+
+                return RedirectToAction("Contracts");
+            }
+            catch (Exception e)
+            {
+                // more error handling? dev mode?
+                return View("~/Views/Shared/Error.cshtml", new ErrorViewModel(e.Message + " - " + (e.InnerException?.Message)));
+            }
+        }
         #endregion
     }
 }

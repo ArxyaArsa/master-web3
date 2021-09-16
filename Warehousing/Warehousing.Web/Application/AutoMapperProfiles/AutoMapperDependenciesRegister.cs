@@ -12,7 +12,9 @@ namespace Warehousing.Web.Application.AutoMapperProfiles
                 mc.AddProfile(new ParcelProfile());
                 mc.AddProfile(new ParcelTypeProfile()); 
                 mc.AddProfile(new SupplierProfile());
+                mc.AddProfile(new ContractProfile());
             });
+
             IMapper mapper = mappingConfig.CreateMapper();
             serviceCollection.AddSingleton(mapper);
         }

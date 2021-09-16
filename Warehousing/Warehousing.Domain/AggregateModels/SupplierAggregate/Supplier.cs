@@ -32,6 +32,8 @@ namespace Warehousing.Domain.AggregateModels.SupplierAggregate
         public Supplier(string name, string description, SupplierContact contact, SupplierAddress address) : this()
         {
             Update(name, description, contact, address);
+
+            AddDate = DateTime.UtcNow;
         }
 
         public void AddContract(string contractDesc, DateTime startDate, DateTime paymentDueUntil, bool isPayed = false)
@@ -54,8 +56,13 @@ namespace Warehousing.Domain.AggregateModels.SupplierAggregate
             Description = description;
             Contact = contact;
             Address = address;
+        }
 
-            AddDate = DateTime.UtcNow;
+        public void UpdateContract(int cId, string contractDesc, DateTime startDate, DateTime paymentDueUntil, bool isPayed = false)
+        {
+            var c = _contracts.Find(x => x.Id == cId);
+
+            c.Update(contractDesc, startDate, paymentDueUntil, isPayed);
         }
     }
 }

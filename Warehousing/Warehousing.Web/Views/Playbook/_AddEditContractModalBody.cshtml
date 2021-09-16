@@ -1,0 +1,60 @@
+﻿@model Warehousing.Web.Models.DTOs.ContractDTO
+
+@{ 
+    var rnd = new Random((int)(DateTime.Now.Ticks % int.MaxValue));
+    uint uid = (((uint)rnd.Next(0, 255)) << 24) + (((uint)rnd.Next(0, 255)) << 16) + (((uint)rnd.Next(0, 255)) << 8) + (uint)rnd.Next(0, 255);
+
+    if (Model.StartDate == DateTime.MinValue)
+    {
+        Model.StartDate = DateTime.Now;
+    }
+
+    if (Model.PaymentDueUntil == DateTime.MinValue)
+    {
+        Model.PaymentDueUntil = DateTime.Now;
+    }
+}
+
+<div class="row add-edit-contract-form-container add-edit-contract-form-container-@(uid) form-group">
+    <form class="add-edit-contract-form" method="post" action="@Url.Action((Model.Id != 0 ? "EditContract" : "AddContract"), "Playbook", new { })">
+        <div class="row">
+            <div class="col-sm-1">@Html.HiddenFor(x => x.Id, new { Id = (string)null, Value = Model.Id })</div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.Description):</div>
+            <div class="col-sm-7">@Html.TextAreaFor(x => x.Description, new { Class = "form-control", Id = (string)null, Rows = 2 })</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.StartDate):</div>
+            <div class="col-sm-7">@Html.EditorFor(x => x.StartDate, new { htmlAttributes = new { Type = "date", Class = "form-control", Id = (string)null } })</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.PaymentDueUntil):</div>
+            <div class="col-sm-7">@Html.EditorFor(x => x.PaymentDueUntil, new { htmlAttributes = new { Type = "date", Class = "form-control", Id = (string)null } })</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.IsPayed):</div>
+            <div class="col-sm-1">@Html.CheckBoxFor(x => x.IsPayed, new { Class = "form-control", Id = (string)null })</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-3">@Html.DisplayNameFor(x => x.SupplierId):</div>
+            <div class="col-sm-7">
+                @Html.DropDownListFor(x => x.SupplierId, ((IEnumerable<Warehousing.Web.Models.DTOs.SupplierDTO>)ViewBag.Suppliers).Select(y => new SelectListItem(y.Name, y.Id.ToString())).ToList(), null, new { Class = "form-control", Id = (string)null })
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        let $modal = $(window.Contracts.selectors.Modal).data('modaljsobj');
+        $modal.assignSaveCallback(function () {
+            $('.add-edit-contract-form-container-@(uid) form.add-edit-contract-form').submit();
+        });
+
+        $('.add-edit-contract-form-container-@(uid) form.add-edit-contract-form input[name="StartDate"]').val("@Html.Raw(Model.StartDate.ToString("yyyy-MM-dd"))");
+        $('.add-edit-contract-form-container-@(uid) form.add-edit-contract-form input[name="PaymentDueUntil"]').val("@Html.Raw(Model.PaymentDueUntil.ToString("yyyy-MM-dd"))");
+    });
+</script>

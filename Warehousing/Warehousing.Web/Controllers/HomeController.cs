@@ -12,7 +12,9 @@ namespace Warehousing.Web.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Resources");
+
+            //return View();
         }
 
         public IActionResult About()
